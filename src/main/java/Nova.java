@@ -9,12 +9,7 @@ import java.util.Scanner;
  * marked, unmarked, and listed via simple text commands entered on the
  * command line.
  */
-
-
 public class Nova {
-
-    private static final String MARKED_PREFIX = "[X] ";
-    private static final String UNMARKED_PREFIX = "[ ] ";
 
     /**
      * Prints Nova's ASCII art logo to the console in cyan.
@@ -91,6 +86,20 @@ public class Nova {
     }
 
     /**
+     * Prints confirmation that a task was added, followed by the running total.
+     *
+     * @param tasks The current task list, used to report its new size.
+     * @param task  The task that was just added.
+     */
+    private static void printAdded(List<Task> tasks, Task task) {
+        System.out.println("\t____________________________________________________________");
+        System.out.println("\tUgh, fine. I've added this to your ever-growing pile:");
+        System.out.println("\t  " + task);
+        System.out.println("\tNow you have " + tasks.size() + " tasks. Try to keep up.");
+        System.out.println("\t____________________________________________________________");
+    }
+
+    /**
      * Runs Nova's command loop, reading commands from standard input until
      * the user enters "bye".
      *
@@ -102,51 +111,84 @@ public class Nova {
         printLogo();
         greet();
 
-        List<String> entryList = new ArrayList<>();
-        List<String> status = new ArrayList<>();
+        List<Task> tasks = new ArrayList<>();
 
         while (true) {
             String line = scanner.nextLine();
-            if (line.equalsIgnoreCase("bye")) {
+            String trimmed = line.trim();
+
+            if (trimmed.equalsIgnoreCase("bye")) {
                 break;
-            } else if (line.equalsIgnoreCase("list")) {
-                if (entryList.isEmpty()) {
+            } else if (trimmed.equalsIgnoreCase("list")) {
+                if (tasks.isEmpty()) {
                     System.out.println("\tEmpty. Truly groundbreaking work you've done here. "
                             + "You need to add something in before "
                             + "I can list it out for you, genius.");
                 } else {
-                    for (int i = 0; i < entryList.size(); i++) {
-                        System.out.println("\t" + (i + 1) + "." + status.get(i) + entryList.get(i));
+                    System.out.println("\t____________________________________________________________");
+                    for (int i = 0; i < tasks.size(); i++) {
+                        System.out.println("\t" + (i + 1) + "." + tasks.get(i));
                     }
-                    System.out.println();
-                    success();
+                    System.out.println("\t____________________________________________________________");
                 }
-            } else if (line.toLowerCase().startsWith("unmark")) {
-                String[] parts = line.split(" ");
-                int idx = Integer.parseInt(parts[1]) - 1;
-                if (status.get(idx).equals(MARKED_PREFIX)) {
-                    status.set(idx, UNMARKED_PREFIX);
+            } else if (trimmed.toLowerCase().startsWith("unmark")) {
+                int idx = Integer.parseInt(trimmed.split(" ")[1]) - 1;
+                Task task = tasks.get(idx);
+                if (task.isDone()) {
+                    task.markAsNotDone();
                     System.out.println("\tYet another.. distraction.... how fortunate I am. "
                             + "Very well, your task is unmarked.");
-                    System.out.println("\t" + (idx + 1) + "." + status.get(idx) + entryList.get(idx));
+                    System.out.println("\t" + (idx + 1) + "." + task);
                 } else {
                     System.out.println("\tWell, isn't that embarrassing. This was already unmarked, you moron.");
                 }
-            } else if (line.toLowerCase().startsWith("mark")) {
-                String[] parts = line.split(" ");
-                int idx = Integer.parseInt(parts[1]) - 1;
-                if (status.get(idx).equals(UNMARKED_PREFIX)) {
-                    status.set(idx, MARKED_PREFIX);
+            } else if (trimmed.toLowerCase().startsWith("mark")) {
+                int idx = Integer.parseInt(trimmed.split(" ")[1]) - 1;
+                Task task = tasks.get(idx);
+                if (!task.isDone()) {
+                    task.markAsDone();
                     System.out.println("\tHuh. I'm almost proud. Almost.\n\tYour task has been marked.");
-                    System.out.println("\t" + (idx + 1) + "." + status.get(idx) + entryList.get(idx));
+                    System.out.println("\t" + (idx + 1) + "." + task);
                 } else {
                     System.out.println("\tOh, you simpleton, this was already marked.");
                 }
+            } else if (trimmed.toLowerCase().startsWith("todo")) {
+                String desc = trimmed.length() > 4 ? trimmed.substring(4).trim() : "";
+                if (desc.isEmpty()) {
+                    System.out.println("\tA todo with no description? How very... you.");
+                } else {
+                    Task task = new Todo(desc);
+                    tasks.add(task);
+                    printAdded(tasks, task);
+                }
+            } else if (trimmed.toLowerCase().startsWith("deadline")) {
+                String rest = trimmed.length() > 8 ? trimmed.substring(8).trim() : "";
+                String[] parts = rest.split("/by", 2);
+                if (parts.length < 2 || parts[0].trim().isEmpty()) {
+                    System.out.println("\tA deadline needs both a description and a '/by'. Do try again.");
+                } else {
+                    Task task = new Deadline(parts[0].trim(), parts[1].trim());
+                    tasks.add(task);
+                    printAdded(tasks, task);
+                }
+            } else if (trimmed.toLowerCase().startsWith("event")) {
+                String rest = trimmed.length() > 5 ? trimmed.substring(5).trim() : "";
+                String[] fromSplit = rest.split("/from", 2);
+                if (fromSplit.length < 2 || fromSplit[0].trim().isEmpty()) {
+                    System.out.println("\tAn event needs a description and a '/from'. Honestly.");
+                    continue;
+                }
+                String[] toSplit = fromSplit[1].split("/to", 2);
+                if (toSplit.length < 2) {
+                    System.out.println("\tAn event needs a '/to' as well. Do finish your thought.");
+                    continue;
+                }
+                Task task = new Event(fromSplit[0].trim(), toSplit[0].trim(), toSplit[1].trim());
+                tasks.add(task);
+                printAdded(tasks, task);
             } else {
                 System.out.println("\t____________________________________________________________");
-                System.out.println("\tadded: " + line);
-                status.add(UNMARKED_PREFIX);
-                entryList.add(line);
+                System.out.println("\tI don't recognize that command. Even I have my limits.");
                 System.out.println("\t____________________________________________________________");
             }
         }

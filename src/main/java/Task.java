@@ -1,7 +1,7 @@
 /**
  * Represents a single task with a description and a completion status.
  */
-public class Task {
+public abstract class Task {
 
     protected String description;
     protected boolean isDone;
@@ -34,6 +34,13 @@ public class Task {
     }
 
     /**
+     * Returns the letter representing this task's type, e.g. "T", "D", "E".
+     *
+     * @return The type icon for this task.
+     */
+    public abstract String getTypeIcon();
+
+    /**
      * Marks this task as done.
      */
     public void markAsDone() {
@@ -49,6 +56,6 @@ public class Task {
 
     @Override
     public String toString() {
-        return "[" + getStatusIcon() + "] " + description;
+        return "[" + getTypeIcon() + "][" + getStatusIcon() + "] " + description;
     }
 }
