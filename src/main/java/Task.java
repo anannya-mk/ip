@@ -1,6 +1,8 @@
 /**
  * Represents a single task with a description and a completion status.
  */
+package nova.task;
+
 public abstract class Task {
 
     protected String description;

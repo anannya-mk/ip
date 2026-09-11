@@ -1,7 +1,14 @@
+package nova;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+
+import nova.task.Task;
+import nova.task.Todo;
+import nova.task.Deadline;
+import nova.task.Event;
 
 /**
  * Represents Nova, a command-line task list assistant with a sarcastic,
