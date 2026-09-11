@@ -1,8 +1,8 @@
+package nova.task;
 /**
  * Represents a single task with a description and a completion status.
+ * This is the abstract base class for all task types (Todo, Deadline, Event).
  */
-package nova.task;
-
 public abstract class Task {
 
     protected String description;
@@ -10,26 +10,28 @@ public abstract class Task {
 
     /**
      * Creates a new, incomplete task with the given description.
-     *
-     * @param description Description of the task.
      */
     public Task(String description) {
         this.description = description;
         this.isDone = false;
     }
 
+    /**
+     * Returns whether this task has been marked as done.
+     */
     public boolean isDone() {
         return isDone;
     }
 
+    /**
+     * Returns the description of this task.
+     */
     public String getDescription() {
         return description;
     }
 
     /**
      * Returns the status icon representing whether this task is done.
-     *
-     * @return "X" if the task is done, otherwise a blank space.
      */
     public String getStatusIcon() {
         return (isDone ? "X" : " ");
@@ -37,8 +39,7 @@ public abstract class Task {
 
     /**
      * Returns the letter representing this task's type, e.g. "T", "D", "E".
-     *
-     * @return The type icon for this task.
+     * Each subclass must define its own type icon.
      */
     public abstract String getTypeIcon();
 
@@ -56,6 +57,10 @@ public abstract class Task {
         isDone = false;
     }
 
+    /**
+    * Returns the display representation of this task, e.g. "[T][X] read book".
+     * Subclasses extend this by appending their own extra details.
+     */
     @Override
     public String toString() {
         return "[" + getTypeIcon() + "][" + getStatusIcon() + "] " + description;

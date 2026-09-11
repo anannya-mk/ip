@@ -18,6 +18,9 @@ import nova.task.Event;
  */
 
 public class Nova {
+
+    public static final String DIVIDER = "\t____________________________________________________________";
+
     /**
      * Prints Nova's ASCII art logo to the console in cyan.
      */
@@ -75,7 +78,7 @@ public class Nova {
     }
 
     private static void separate() {
-        System.out.println("\t____________________________________________________________");
+        System.out.println(DIVIDER);
     }
 
     /**
@@ -119,116 +122,99 @@ public class Nova {
         greet();
 
         List<Task> tasks = new ArrayList<>();
+        boolean isRunning = true;
 
-        while (true) {
-            String line = scanner.nextLine();
-            String trimmed = line.trim();
-
-            try {
-                if (trimmed.equalsIgnoreCase("bye")) {
-                    break;
-                }
-
-                else if (trimmed.equalsIgnoreCase("list")) {
-                    if (tasks.isEmpty()) {
-                        System.out.println("\tEmpty. Truly groundbreaking work you've done here. "
-                                + "You need to add something in before "
-                                + "I can list it out for you, genius.");}
-
-                    else {
-                        separate();
-                        for (int i = 0; i < tasks.size(); i++) {
-                            System.out.println("\t" + (i + 1) + "." + tasks.get(i));
-                        }
-                        separate();
-                    }
-                }
-
-                else if (trimmed.toLowerCase().startsWith("unmark")) {
-                    int idx = getIndex(trimmed, tasks.size());
-                    Task task = tasks.get(idx);
-
-                    if (task.isDone()) {
-                        task.markAsNotDone();
-                        System.out.println("\tVery well, your task is unmarked.");
-                        System.out.println("\t" + (idx + 1) + "." + task);
-                    }
-
-                    else {
-                        System.out.println("\tWell, isn't that embarrassing. This was already unmarked, you moron.");
-                    }
-                }
-
-                else if (trimmed.toLowerCase().startsWith("mark")) {
-                    int idx = getIndex(trimmed, tasks.size());
-                    Task task = tasks.get(idx);
-                    if (!task.isDone()) {
-                        task.markAsDone();
-                        System.out.println("\tHuh. I'm almost proud. Almost.\n\tYour task has been marked.");
-                        System.out.println("\t" + (idx + 1) + "." + task);
-                    }
-
-                    else {
-                        System.out.println("\tOh, you simpleton, this was already marked.");
-                    }
-                }
-
-                else if (trimmed.toLowerCase().startsWith("todo")) {
-                    String desc = trimmed.length() > 4 ? trimmed.substring(4).trim() : "";
-
-                    if (desc.isEmpty()) {
-                        throw new NovaException("No description? How very... you.");
-                    }
-                    Task task = new Todo(desc);
-                    tasks.add(task);
-                    printAdded(tasks, task);
-                }
-
-                else if (trimmed.toLowerCase().startsWith("deadline")) {
-                    String rest = trimmed.length() > 8 ? trimmed.substring(8).trim() : "";
-                    String[] parts = rest.split("/by", 2);
-
-                    if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
-                        throw new NovaException("A deadline needs both a description and a '/by'. Do try again.");
-                    }
-
-                    Task task = new Deadline(parts[0].trim(), parts[1].trim());
-                    tasks.add(task);
-                    printAdded(tasks, task);
-                }
-
-                else if (trimmed.toLowerCase().startsWith("event")) {
-                    String rest = trimmed.length() > 5 ? trimmed.substring(5).trim() : "";
-                    String[] fromSplit = rest.split("/from", 2);
-                    if (fromSplit.length < 2 || fromSplit[0].trim().isEmpty()) {
-                        throw new NovaException("An event needs a description and a '/from'. Honestly.");
-                    }
-
-                    String[] toSplit = fromSplit[1].split("/to", 2);
-                    if (toSplit.length < 2 || toSplit[0].trim().isEmpty() || toSplit[1].trim().isEmpty()) {
-                        throw new NovaException("An event needs a '/to' as well. Do finish your thought.");
-                    }
-
-                    Task task = new Event(fromSplit[0].trim(), toSplit[0].trim(), toSplit[1].trim());
-                    tasks.add(task);
-                    printAdded(tasks, task);
-                }
-
-                else if (!trimmed.isEmpty()) {
-                    throw new NovaException("I don't recognize that command. Even I have my limits.");
-                }
-
-            }
-
-            catch (NovaException e) {
-                separate();
-                System.out.println("\t" + e.getMessage());
-                separate();
-            }
+        while (isRunning) {
+            String input = scanner.nextLine().trim();
+            isRunning = handleCommand(input, tasks);
         }
         farewell();
     }
 
+    /**
+     * Processes a single line of user input: parses the command, dispatches to
+     * the appropriate action, and reports errors in Nova's voice.
+     */
+    private static boolean handleCommand(String input, List<Task> tasks) {
+        try {
+            if (input.equalsIgnoreCase("bye")) {
+                return false;
+            } else if (input.equalsIgnoreCase("list")) {
+                if (tasks.isEmpty()) {
+                    System.out.println("\tEmpty. Truly groundbreaking work you've done here. "
+                            + "You need to add something in before "
+                            + "I can list it out for you, genius.");
+                } else {
+                    separate();
+                    for (int i = 0; i < tasks.size(); i++) {
+                        System.out.println("\t" + (i + 1) + "." + tasks.get(i));
+                    }
+                    separate();
+                }
+            } else if (input.toLowerCase().startsWith("unmark")) {
+                int idx = getIndex(input, tasks.size());
+                Task task = tasks.get(idx);
+                if (task.isDone()) {
+                    task.markAsNotDone();
+                    System.out.println("\tVery well, your task is unmarked.");
+                    System.out.println("\t" + (idx + 1) + "." + task);
+                } else {
+                    System.out.println("\tWell, isn't that embarrassing. This was already unmarked, you moron.");
+                }
+            } else if (input.toLowerCase().startsWith("mark")) {
+                int idx = getIndex(input, tasks.size());
+                Task task = tasks.get(idx);
+                if (!task.isDone()) {
+                    task.markAsDone();
+                    System.out.println("\tHuh. I'm almost proud. Almost.\n\tYour task has been marked.");
+                    System.out.println("\t" + (idx + 1) + "." + task);
+                } else {
+                    System.out.println("\tOh, you simpleton, this was already marked.");
+                }
+            } else if (input.toLowerCase().startsWith("todo")) {
+                String desc = input.length() > 4 ? input.substring(4).trim() : "";
+                if (desc.isEmpty()) {
+                    throw new NovaException("No description? How very... you.");
+                }
+                Task task = new Todo(desc);
+                tasks.add(task);
+                printAdded(tasks, task);
+            } else if (input.toLowerCase().startsWith("deadline")) {
+                String rest = input.length() > 8 ? input.substring(8).trim() : "";
+                String[] parts = rest.split("/by", 2);
+                if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
+                    throw new NovaException("A deadline needs both a description and a '/by'. Do try again.");
+                }
+                Task task = new Deadline(parts[0].trim(), parts[1].trim());
+                tasks.add(task);
+                printAdded(tasks, task);
+            } else if (input.toLowerCase().startsWith("event")) {
+                String rest = input.length() > 5 ? input.substring(5).trim() : "";
+                String[] fromSplit = rest.split("/from", 2);
+                if (fromSplit.length < 2 || fromSplit[0].trim().isEmpty()) {
+                    throw new NovaException("An event needs a description and a '/from'. Honestly.");
+                }
+                String[] toSplit = fromSplit[1].split("/to", 2);
+                if (toSplit.length < 2 || toSplit[0].trim().isEmpty() || toSplit[1].trim().isEmpty()) {
+                    throw new NovaException("An event needs a '/to' as well. Do finish your thought.");
+                }
+                Task task = new Event(fromSplit[0].trim(), toSplit[0].trim(), toSplit[1].trim());
+                tasks.add(task);
+                printAdded(tasks, task);
+            } else if (!input.isEmpty()) {
+                throw new NovaException("I don't recognize that command. Even I have my limits.");
+            }
+        } catch (NovaException e) {
+            separate();
+            System.out.println("\t" + e.getMessage());
+            separate();
+        }
+        return true;
+    }
+
+    /**
+            * Parses the index argument from a mark/unmark command and validates it.
+    */
     private static int getIndex(String trimmed, int taskCount) throws NovaException {
         String[] tokens = trimmed.split("\\s+");
         if (tokens.length < 2) {
