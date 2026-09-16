@@ -1,6 +1,5 @@
 package nova;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
@@ -20,11 +19,12 @@ import nova.task.Event;
 public class Nova {
 
     public static final String DIVIDER = "\t____________________________________________________________";
+    private static final String FILE_PATH = "./data/nova.txt";
 
     /**
      * Prints Nova's ASCII art logo to the console in cyan.
      */
-    
+
     public static void printLogo() {
         String cyan = "\u001B[36m";
         String reset = "\u001B[0m";
@@ -121,12 +121,14 @@ public class Nova {
         printLogo();
         greet();
 
-        List<Task> tasks = new ArrayList<>();
+        Storage storage = new Storage(FILE_PATH);
+        List<Task> tasks = storage.load();
         boolean isRunning = true;
 
         while (isRunning) {
             String input = scanner.nextLine().trim();
             isRunning = handleCommand(input, tasks);
+            storage.save(tasks);
         }
         farewell();
     }
@@ -171,6 +173,14 @@ public class Nova {
                 } else {
                     System.out.println("\tOh, you simpleton, this was already marked.");
                 }
+            } else if (input.toLowerCase().startsWith("delete")) {
+                int idx = getIndex(input, tasks.size());
+                Task removed = tasks.remove(idx);
+                separate();
+                System.out.println("\tNoted. I've removed this task:");
+                System.out.println("\t  " + removed);
+                System.out.println("\tNow you have " + tasks.size() + " tasks in the list.");
+                separate();
             } else if (input.toLowerCase().startsWith("todo")) {
                 String desc = input.length() > 4 ? input.substring(4).trim() : "";
                 if (desc.isEmpty()) {
@@ -213,8 +223,8 @@ public class Nova {
     }
 
     /**
-            * Parses the index argument from a mark/unmark command and validates it.
-    */
+     * Parses the index argument from a mark/unmark command and validates it.
+     */
     private static int getIndex(String trimmed, int taskCount) throws NovaException {
         String[] tokens = trimmed.split("\\s+");
         if (tokens.length < 2) {
