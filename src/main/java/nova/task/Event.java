@@ -32,4 +32,12 @@ public class Event extends Task {
     public String toString() {
         return super.toString() + " (from: " + from + " to: " + to + ")";
     }
+
+    /**
+     * Returns this event as a save-file line, including its time range.
+     */
+    @Override
+    public String toSaveString() {
+        return super.toSaveString() + " | " + from + " | " + to;
+    }
 }

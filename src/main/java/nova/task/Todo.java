@@ -12,8 +12,8 @@ public class Todo extends Task {
     }
 
     /**
-    * Returns the type icon for a Todo task.
-    */
+     * Returns the type icon for a Todo task.
+     */
     @Override
     public String getTypeIcon() {
         return "T";

@@ -7,14 +7,14 @@ public class Deadline extends Task {
     protected String by;
 
     /**
-    * Creates a new Deadline with the given description and due date.
-    */
+     * Creates a new Deadline with the given description and due date.
+     */
     public Deadline(String description, String by) {
         super(description);
         this.by = by;
     }
     /**
-    * Returns the type icon for a Deadline task.
+     * Returns the type icon for a Deadline task.
      */
     @Override
     public String getTypeIcon() {
@@ -27,5 +27,13 @@ public class Deadline extends Task {
     @Override
     public String toString() {
         return super.toString() + " (by: " + by + ")";
+    }
+
+    /**
+     * Returns this deadline as a save-file line, including its due date.
+     */
+    @Override
+    public String toSaveString() {
+        return super.toSaveString() + " | " + by;
     }
 }

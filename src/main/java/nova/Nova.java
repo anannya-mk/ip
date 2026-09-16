@@ -171,27 +171,6 @@ public class Nova {
                 } else {
                     System.out.println("\tOh, you simpleton, this was already marked.");
                 }
-            } else if (input.toLowerCase().startsWith("delete")) {
-                int idx = getIndex(input, tasks.size());
-                Task removed = tasks.remove(idx);
-                separate();
-                System.out.println("\tNoted. I've removed this task:");
-                System.out.println("\t  " + removed);
-                System.out.println("\tNow you have " + tasks.size() + " tasks in the list.");
-                separate();
-            } else if (input.toLowerCase().startsWith("event")) {
-                String rest = input.length() > 5 ? input.substring(5).trim() : "";
-                String[] fromSplit = rest.split("/from", 2);
-                if (fromSplit.length < 2 || fromSplit[0].trim().isEmpty()) {
-                    throw new NovaException("An event needs a description and a '/from'. Honestly.");
-                }
-                String[] toSplit = fromSplit[1].split("/to", 2);
-                if (toSplit.length < 2 || toSplit[0].trim().isEmpty() || toSplit[1].trim().isEmpty()) {
-                    throw new NovaException("An event needs a '/to' as well. Do finish your thought.");
-                }
-                Task task = new Event(fromSplit[0].trim(), toSplit[0].trim(), toSplit[1].trim());
-                tasks.add(task);
-                printAdded(tasks, task);
             } else if (input.toLowerCase().startsWith("todo")) {
                 String desc = input.length() > 4 ? input.substring(4).trim() : "";
                 if (desc.isEmpty()) {
@@ -209,10 +188,22 @@ public class Nova {
                 Task task = new Deadline(parts[0].trim(), parts[1].trim());
                 tasks.add(task);
                 printAdded(tasks, task);
+            } else if (input.toLowerCase().startsWith("event")) {
+                String rest = input.length() > 5 ? input.substring(5).trim() : "";
+                String[] fromSplit = rest.split("/from", 2);
+                if (fromSplit.length < 2 || fromSplit[0].trim().isEmpty()) {
+                    throw new NovaException("An event needs a description and a '/from'. Honestly.");
+                }
+                String[] toSplit = fromSplit[1].split("/to", 2);
+                if (toSplit.length < 2 || toSplit[0].trim().isEmpty() || toSplit[1].trim().isEmpty()) {
+                    throw new NovaException("An event needs a '/to' as well. Do finish your thought.");
+                }
+                Task task = new Event(fromSplit[0].trim(), toSplit[0].trim(), toSplit[1].trim());
+                tasks.add(task);
+                printAdded(tasks, task);
             } else if (!input.isEmpty()) {
                 throw new NovaException("I don't recognize that command. Even I have my limits.");
             }
-
         } catch (NovaException e) {
             separate();
             System.out.println("\t" + e.getMessage());
