@@ -58,7 +58,15 @@ public abstract class Task {
     }
 
     /**
-    * Returns the display representation of this task, e.g. "[T][X] read book".
+     * Returns this task as a single line of text suitable for saving to disk.
+     * Subclasses append their own extra fields.
+     */
+    public String toSaveString() {
+        return getTypeIcon() + " | " + (isDone ? "1" : "0") + " | " + description;
+    }
+
+    /**
+     * Returns the display representation of this task, e.g. "[T][X] read book".
      * Subclasses extend this by appending their own extra details.
      */
     @Override
