@@ -16,7 +16,7 @@ import nova.task.Event;
 
 /**
  * Handles reading and writing the task list to a file on disk, so tasks
- * persist between runs of Nova.
+ * continue between runs of Nova.
  */
 public class Storage {
 
@@ -30,10 +30,10 @@ public class Storage {
     }
 
     /**
-     * Loads tasks from disk. Returns an empty list if the file or its
-     * containing folder doesn't exist yet.
+     * Loads tasks from disk. Returns an empty list if the file doesn't exist
+     * Throws NovaException if the file exists but can't be read.
      */
-    public List<Task> load() {
+    public List<Task> load() throws NovaException {
         List<Task> tasks = new ArrayList<>();
         Path path = Paths.get(filePath);
 
@@ -50,17 +50,18 @@ public class Storage {
                 }
             }
         } catch (IOException e) {
-            System.out.println("\tCouldn't read your saved tasks. Starting fresh, I suppose.");
+            throw new NovaException("Unable to read " + filePath);
         }
 
         return tasks;
     }
 
     /**
-     * Saves the given list of tasks to disk, creating the folder and file
+     * Saves the given tasks to disk, or creates the folder and file
      * if they don't already exist.
+     * Throws NovaException if the file can't be written.
      */
-    public void save(List<Task> tasks) {
+    public void save(TaskList tasks) throws NovaException {
         try {
             File file = new File(filePath);
             File parentDir = file.getParentFile();
@@ -69,18 +70,18 @@ public class Storage {
             }
 
             try (FileWriter writer = new FileWriter(file)) {
-                for (Task task : tasks) {
+                for (Task task : tasks.getAll()) {
                     writer.write(task.toSaveString() + System.lineSeparator());
                 }
             }
         } catch (IOException e) {
-            System.out.println("\tI couldn't save your tasks. How inconvenient.");
+            throw new NovaException("Unable to write " + filePath);
         }
     }
 
     /**
      * Parses a single saved line back into a Task. Returns null if the
-     * line is malformed.
+     * line is wrong
      */
     private Task parseLine(String line) {
         String[] parts = line.split("\\s*\\|\\s*");
