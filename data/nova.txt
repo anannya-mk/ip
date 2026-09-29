@@ -1,0 +1,2 @@
+D | 0 | return book | sunday
+E | 0 | meeting | Monday 2pm | 4pm

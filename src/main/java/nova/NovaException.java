@@ -4,6 +4,7 @@ package nova;
  * a missing description, an unrecognized command, or an out-of-range task index.
  */
 
+
 public class NovaException extends Exception {
     public NovaException(String message) {
         super(message);

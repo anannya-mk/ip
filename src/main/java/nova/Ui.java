@@ -177,6 +177,22 @@ public class Ui {
     }
 
     /**
+     * Prints the tasks that matched a find command, or a remark if none did.
+     */
+    public void showFoundTasks(List<Task> matches) {
+        showDivider();
+        if (matches.isEmpty()) {
+            System.out.println("\tNothing matches. Perhaps try spelling it correctly?");
+        } else {
+            System.out.println("\tHere are the matching tasks in your list:");
+            for (int i = 0; i < matches.size(); i++) {
+                System.out.println("\t" + (i + 1) + "." + matches.get(i));
+            }
+        }
+        showDivider();
+    }
+
+    /**
      * Prints each line indented, with a divider above and below.
      */
     private void showFramed(String... lines) {

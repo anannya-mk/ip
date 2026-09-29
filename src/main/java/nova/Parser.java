@@ -41,6 +41,20 @@ public class Parser {
         }
     }
 
+    /**
+     * Returns the keyword from input of the form "find KEYWORD".
+     * Throws NovaException if given keyword is missing.
+     */
+    public static String parseKeyword(String input) throws NovaException {
+        String keyword = getArguments(input);
+
+        if (keyword.isEmpty()) {
+            throw new NovaException("Find what, exactly? I'm not a mind reader.");
+        }
+
+        return keyword;
+    }
+
     /** Builds todo from the given input when it's of the form "todo DESCRIPTION"
      * it throws NovaException if the description is missing.
      */

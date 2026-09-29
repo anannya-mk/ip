@@ -83,6 +83,9 @@ public class Nova {
             case "todo":
                 addTask(Parser.parseTodo(input));
                 break;
+            case "find":
+                ui.showFoundTasks(tasks.find(Parser.parseKeyword(input)));
+                break;
             case "deadline":
                 addTask(Parser.parseDeadline(input));
                 break;
