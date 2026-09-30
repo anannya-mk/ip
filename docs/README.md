@@ -182,6 +182,6 @@ You can edit that file by hand, but any line Nova can't make sense of gets skipp
 | List     | `list`                                  | `list`                                        |
 | Mark     | `mark TASK_NUMBER`                      | `mark 1`                                      |
 | Unmark   | `unmark TASK_NUMBER`                    | `unmark 1`                                    |
-| Deadline | `deadline DESCRIPTION /by DATE`         | `deadline return book /by 2026-10-15`         || Delete   | `delete TASK_NUMBER`                    | `delete 2`                                    |
+| Deadline | `deadline DESCRIPTION /by DATE`         | `deadline return book /by 2026-10-15`         |
 | Find     | `find KEYWORD`                          | `find book`                                   |
 | Exit     | `bye`                                   | `bye`                                         |
