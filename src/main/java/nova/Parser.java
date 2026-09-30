@@ -1,5 +1,8 @@
 package nova;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+
 import nova.task.Deadline;
 import nova.task.Event;
 import nova.task.Task;
@@ -69,8 +72,10 @@ public class Parser {
     }
 
     /**
-     * Builds a Deadline from input when of the form "deadline DESCRIPTION /by DATE".
-     * also throws NovaException if the description or /by part is missing.
+     * Builds a Deadline from input of the form "deadline DESCRIPTION /by DATE",
+     * where DATE is in yyyy-mm-dd format (e.g. 2026-10-15).
+     * Throws NovaException if the description or /by part is missing,
+     * or if the date is not in the expected format.
      */
     public static Task parseDeadline(String input) throws NovaException {
         String[] parts = getArguments(input).split("/by", 2);
@@ -83,7 +88,17 @@ public class Parser {
                             + "Do try again.");
         }
 
-        return new Deadline(parts[0].trim(), parts[1].trim());
+        String byText = parts[1].trim();
+        LocalDate by;
+
+        try {
+            by = LocalDate.parse(byText);
+        } catch (DateTimeParseException e) {
+            throw new NovaException("'" + byText + "' is not a date, genius. "
+                    + "Use yyyy-mm-dd, e.g. 2026-10-15.");
+        }
+
+        return new Deadline(parts[0].trim(), by);
     }
 
     /**

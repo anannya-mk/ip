@@ -1,5 +1,8 @@
 package nova;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -102,7 +105,11 @@ public class Storage {
                 if (parts.length < 4) {
                     return null;
                 }
-                task = new Deadline(description, parts[3]);
+                try {
+                    task = new Deadline(description, LocalDate.parse(parts[3]));
+                } catch (DateTimeParseException e) {
+                    return null; // Skip lines whose date can't be read
+                }
                 break;
             case "E":
                 if (parts.length < 5) {
