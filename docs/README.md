@@ -52,19 +52,23 @@ Leave out the description and Nova will point that out, not kindly.
 
 ### Adding a deadline: `deadline`
 
-For something that needs to be done by a certain time.
+For something that needs to be done by a certain date.
 
-Format: `deadline DESCRIPTION /by TIME`
+Format: `deadline DESCRIPTION /by DATE`
 
-Example: `deadline return book /by Sunday`
+Write the date as `yyyy-mm-dd`. Nova shows it back in a friendlier form.
+
+Example: `deadline return book /by 2026-10-15`
 
 ```
 ____________________________________________________________
 I've added this to your ever-growing pile:
-  [D][ ] return book (by: Sunday)
+  [D][ ] return book (by: Oct 15 2026)
 You now have 2 tasks. Do try to keep up.
 ____________________________________________________________
 ```
+
+Anything else, like `Sunday` or `October 20`, gets rejected, with commentary.```
 
 ### Adding an event: `event`
 
@@ -91,7 +95,7 @@ Format: `list`
 ```
 ____________________________________________________________
 1.[T][ ] read book
-2.[D][ ] return book (by: Sunday)
+2.[D][ ] return book (by: Oct 15 2026)
 3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
 ____________________________________________________________
 ```
@@ -134,7 +138,7 @@ Example: `delete 2`
 ```
 ____________________________________________________________
 Noted. I've removed this task:
-  [D][ ] return book (by: Sunday)
+   [D][ ] return book (by: Oct 15 2026)
 Now you have 2 tasks in the list.
 ____________________________________________________________
 ```
@@ -178,6 +182,6 @@ You can edit that file by hand, but any line Nova can't make sense of gets skipp
 | List     | `list`                                  | `list`                                        |
 | Mark     | `mark TASK_NUMBER`                      | `mark 1`                                      |
 | Unmark   | `unmark TASK_NUMBER`                    | `unmark 1`                                    |
-| Delete   | `delete TASK_NUMBER`                    | `delete 2`                                    |
+| Deadline | `deadline DESCRIPTION /by DATE`         | `deadline return book /by 2026-10-15`         || Delete   | `delete TASK_NUMBER`                    | `delete 2`                                    |
 | Find     | `find KEYWORD`                          | `find book`                                   |
 | Exit     | `bye`                                   | `bye`                                         |
